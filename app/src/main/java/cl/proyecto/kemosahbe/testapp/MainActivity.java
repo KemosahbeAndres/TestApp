@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
@@ -21,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     Button btn1, btn2, btn3, btn4;
     TextView text;
     private static final String tag = "App:";
-    Messenger mService = null;
+    Messenger musicService = null;
     Boolean mBound = false;
 
     @Override
@@ -39,15 +38,19 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         Log.e(tag, "Hola Mundo.");
         text = (TextView)findViewById(R.id.txt);
         text.setText("Hola Mundo");
+
+
     }
     @Override
     protected void onStart(){
         super.onStart();
-        Intent intent = new Intent(this, msgService.class);
-        Messenger messenger = new Messenger(handler);
+        //Intent intent = new Intent(this, msgService.class);
+        Intent intent = new Intent(this, MusicService.class);
+        //Messenger messenger = new Messenger(handler);
         try{
-            intent.putExtra("MESSENGER",messenger);
-            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+            //intent.putExtra("MESSENGER",messenger);
+            //bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+            bindService(intent,mConnection,Context.BIND_AUTO_CREATE);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -62,20 +65,38 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         }
     }
     public void onClick(View v){
-        Intent intent = new Intent(MainActivity.this, MusicService.class);;
+        Message mMessage = Message.obtain();
+        Bundle mBundle = new Bundle();
         switch (v.getId()){
             case R.id.btn1:
-                sendcmd("Boton1");
+                //sendcmd("Boton1");
                 break;
             case R.id.btnplay:
-                startService(intent);
+                mBundle.putInt("cmd",MusicService.CMD_PLAY);
+                mMessage.setData(mBundle);
+                try{
+                    musicService.send(mMessage);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 break;
             case R.id.btnpause:
-                //intent.putExtra("PAUSE",true);
-                //bindService(intent,mConnection,Context.BIND_AUTO_CREATE);
+                mBundle.putInt("cmd",MusicService.CMD_PAUSE);
+                mMessage.setData(mBundle);
+                try{
+                    musicService.send(mMessage);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 break;
             case R.id.btnstop:
-                stopService(intent);
+                mBundle.putInt("cmd",MusicService.CMD_STOP);
+                mMessage.setData(mBundle);
+                try{
+                    musicService.send(mMessage);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 break;
             default:
                 break;
@@ -88,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         bund.putString("id", s);
         msg.setData(bund);
         try {
-            mService.send(msg);
+            musicService.send(msg);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -98,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         Message msg = Message.obtain();
         msg.setData(bundle);
         try {
-            mService.send(msg);
+            musicService.send(msg);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -106,20 +127,19 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mService = new Messenger(service);
+            musicService = new Messenger(service);
             mBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            mService = null;
+            musicService = null;
             mBound = false;
         }
     };
-    private Handler handler = new Handler(){
-      public void handleMessage(Message msg){
-          Bundle data = msg.getData();
-          if(data!=null) text.setText(data.getString("respuesta"));
-      }
-    };
+    //private Handler handler = new Handler(){
+         // Bundle data = msg.getData();
+          //if(data!=null) text.setText(data.getString("respuesta"));
+      //}
+    //};
 }
