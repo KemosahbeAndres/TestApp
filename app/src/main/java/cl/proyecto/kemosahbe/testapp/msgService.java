@@ -25,6 +25,7 @@ public class msgService extends Service {
     //Messenger que envia el cliente.
     private Messenger mMessenger;
     //Messenger que envia el servicio.
+    //ke pasas.
     private Messenger outMessenger;
     public Looper mServiceLooper;
 
@@ -83,8 +84,8 @@ public class msgService extends Service {
                 //.setLargeIcon(R.drawable.bell)
                 .setAutoCancel(true);
         NotificationManager ntManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        ntManager.notify(0,not.build());
         try {
+            ntManager.notify(0,not.build());
             Thread.sleep(3000);
             ntManager.cancel(0);
         }catch(Exception e){
