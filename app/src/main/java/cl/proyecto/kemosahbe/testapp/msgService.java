@@ -25,7 +25,6 @@ public class msgService extends Service {
     //Messenger que envia el cliente.
     private Messenger mMessenger;
     //Messenger que envia el servicio.
-    //ke pasas.
     private Messenger outMessenger;
     public Looper mServiceLooper;
 
