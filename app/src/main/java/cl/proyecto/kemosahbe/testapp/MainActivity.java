@@ -71,8 +71,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 startService(intent);
                 break;
             case R.id.btnpause:
-                intent.putExtra("PAUSE",true);
-                bindService(intent,mConnection,Context.BIND_AUTO_CREATE);
+                //intent.putExtra("PAUSE",true);
+                //bindService(intent,mConnection,Context.BIND_AUTO_CREATE);
+                break;
             case R.id.btnstop:
                 stopService(intent);
                 break;
