@@ -43,16 +43,16 @@
         android:layout_height="10dp" />
 
     <Button
-        android:id="@+id/btn2"
+        android:id="@+id/btnplay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/sbtn" />
+        android:text="@string/play" />
 
     <Button
-        android:id="@+id/btn3"
+        android:id="@+id/btnstop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/sbtn" />
+        android:text="@string/stop" />
 
     <Switch
         android:id="@+id/switchtbn"

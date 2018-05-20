@@ -35,9 +35,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         btn1 = (Button)findViewById(R.id.btn1);
         btn1.setOnClickListener(this);
-        btn2 = (Button)findViewById(R.id.btn2);
+        btn2 = (Button)findViewById(R.id.btnplay);
         btn2.setOnClickListener(this);
-        btn3 = (Button)findViewById(R.id.btn3);
+        btn3 = (Button)findViewById(R.id.btnstop);
         btn3.setOnClickListener(this);
         Log.d(tag, "Hola Mundo.");
         text = (TextView)findViewById(R.id.txt);
