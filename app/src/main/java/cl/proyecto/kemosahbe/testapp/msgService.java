@@ -19,7 +19,7 @@ public class msgService extends Service {
     static final int CMD_PLAY = 1;
     static final int CMD_STOP = 2;
     static final String MSG_MEDIA = "MEDIAPLAYER";
-    MediaPlayer mp = MediaPlayer.create(this, R.raw.TheFatRat_Fly_Away_feat_Anjulie);
+    MediaPlayer mp = MediaPlayer.create(this, R.raw.thefatrat_aly_away_feat_anjulie);
     //Messenger que envia el cliente.
     private Messenger mMessenger;
     //Messenger que envia el servicio.
