@@ -2,9 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cl.proyecto.kemosahbe.testapp"
     android:versionCode="1"
-    android:versionName="1.0">
-
-    <uses-permission android:name="android.permission.VIBRATE" />
+    android:versionName="1.1">
 
     <application
         android:allowBackup="true"

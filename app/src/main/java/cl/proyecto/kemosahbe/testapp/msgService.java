@@ -14,13 +14,14 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
+import android.provider.Settings;
 import android.widget.Toast;
 
 public class msgService extends Service {
     static final int CMD_PLAY = 1;
     static final int CMD_STOP = 2;
     static final String MSG_MEDIA = "MEDIAPLAYER";
-    MediaPlayer mp = MediaPlayer.create(msgService.this, R.raw.thefatrat_aly_away_feat_anjulie);
+    MediaPlayer mp = MediaPlayer.create(msgService.this, Settings.System.DEFAULT_RINGTONE_URI);
     //Messenger que envia el cliente.
     private Messenger mMessenger;
     //Messenger que envia el servicio.
@@ -94,6 +95,7 @@ public class msgService extends Service {
     @Override
     public void onDestroy(){
         if(mp != null) mp.release();
+        Toast.makeText(this, "Saliendo del servicio", Toast.LENGTH_SHORT).show();
     }
     public void notificacion(){
         //Intent intent = new Intent(this, MainActivity.class);
