@@ -4,10 +4,9 @@ package cl.proyecto.kemosahbe.testapp;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.drawable.Icon;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -15,13 +14,12 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.RemoteException;
-import android.support.v4.graphics.drawable.IconCompat;
-import android.view.View;
-import android.widget.Toast;
 
 public class msgService extends Service {
-    static final int MSG_HELLO = 1;
+    static final int CMD_PLAY = 1;
+    static final int CMD_STOP = 2;
+    static final String MSG_MEDIA = "MEDIAPLAYER";
+    MediaPlayer mp = MediaPlayer.create(this, R.raw.TheFatRat_Fly_Away_feat_Anjulie);
     //Messenger que envia el cliente.
     private Messenger mMessenger;
     //Messenger que envia el servicio.
@@ -51,16 +49,29 @@ public class msgService extends Service {
                 //Se prepara una respuesta en la variable 'response'.
                 Message response = Message.obtain();
                 Bundle paquete = new Bundle();
-                paquete.putString("respuesta",bund.getString("id"));
-                response.setData(paquete);
-                try{
-                    //Aqui se envia el mensaje de respuesta hacia el cliente.
-                    outMessenger.send(response);
-                }catch(Exception e){
-                    e.printStackTrace();
+                if(bund.getInt(MSG_MEDIA) != -1){
+                    playmedia(bund.getInt(MSG_MEDIA));
+                }else {
+                    paquete.putString("respuesta", bund.getString("id"));
+                    response.setData(paquete);
+                    try {
+                        //Aqui se envia el mensaje de respuesta hacia el cliente.
+                        outMessenger.send(response);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 notificacion();
             }
+        }
+    }
+    void playmedia(int cmd){
+        switch(cmd){
+            case CMD_PLAY:
+                mp.start();
+                break;
+            case CMD_STOP:
+                mp.stop();
         }
     }
     @Override
@@ -71,7 +82,10 @@ public class msgService extends Service {
         }
         return mMessenger.getBinder();
     }
-
+    @Override
+    public void onDestroy(){
+        if(mp != null) mp.release();
+    }
     public void notificacion(){
         //Intent intent = new Intent(this, MainActivity.class);
         //intent.putExtra("dato","Jajajajaja funciono xD");

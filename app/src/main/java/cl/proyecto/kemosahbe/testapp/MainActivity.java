@@ -1,28 +1,23 @@
 package cl.proyecto.kemosahbe.testapp;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements OnClickListener {
     Button btn1, btn2, btn3;
     TextView text;
     private static final String tag = "App:";
@@ -65,22 +60,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
     public void onClick(View v){
+        Bundle bundle = new Bundle();
         switch (v.getId()){
             case R.id.btn1:
-                saludo("Boton1");
+                sendcmd("Boton1");
                 break;
             case R.id.btn2:
-                saludo("Boton2");
+                bundle.putInt(msgService.MSG_MEDIA,msgService.CMD_PLAY);
+                sendcmd(bundle);
                 break;
             case R.id.btn3:
-                saludo("Boton 0003");
+                bundle.putInt(msgService.MSG_MEDIA, msgService.CMD_STOP);
+                sendcmd(bundle);
                 break;
             default:
                 break;
         }
     }
 
-    public void saludo(String s) {
+    public void sendcmd(String s) {
         if (!mBound) return;
         Message msg = Message.obtain();
         Bundle bund = new Bundle();
@@ -92,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
     }
-    public void saludo(Bundle bundle){
+    public void sendcmd(Bundle bundle){
         if (!mBound) return;
         Message msg = Message.obtain();
         msg.setData(bundle);
