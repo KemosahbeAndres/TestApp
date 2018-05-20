@@ -14,12 +14,13 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
+import android.widget.Toast;
 
 public class msgService extends Service {
     static final int CMD_PLAY = 1;
     static final int CMD_STOP = 2;
     static final String MSG_MEDIA = "MEDIAPLAYER";
-    MediaPlayer mp = MediaPlayer.create(this, R.raw.thefatrat_aly_away_feat_anjulie);
+    MediaPlayer mp = null;
     //Messenger que envia el cliente.
     private Messenger mMessenger;
     //Messenger que envia el servicio.
@@ -50,7 +51,15 @@ public class msgService extends Service {
                 Message response = Message.obtain();
                 Bundle paquete = new Bundle();
                 if(bund.getInt(MSG_MEDIA) != -1){
-                    playmedia(bund.getInt(MSG_MEDIA));
+                    try {
+                        int cmd = bund.getInt(MSG_MEDIA);
+                        Toast.makeText(msgService.this, cmd, Toast.LENGTH_SHORT).show();
+                        mp.create(msgService.this, R.raw.thefatrat_aly_away_feat_anjulie);
+                        playmedia(cmd);
+                    }catch(Exception e){
+                        e.printStackTrace();
+                        Toast.makeText(msgService.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }else {
                     paquete.putString("respuesta", bund.getString("id"));
                     response.setData(paquete);
