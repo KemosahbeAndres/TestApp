@@ -49,14 +49,15 @@
         android:text="@string/play" />
 
     <Button
+        android:id="@+id/btnpause"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pause" />
+
+    <Button
         android:id="@+id/btnstop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/stop" />
 
-    <Switch
-        android:id="@+id/switchtbn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Cambiar" />
 </LinearLayout>

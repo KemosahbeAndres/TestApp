@@ -21,7 +21,7 @@ public class msgService extends Service {
     static final int CMD_PLAY = 1;
     static final int CMD_STOP = 2;
     static final String MSG_MEDIA = "MEDIAPLAYER";
-    MediaPlayer mp = MediaPlayer.create(msgService.this, Settings.System.DEFAULT_RINGTONE_URI);
+    MediaPlayer mp;
     //Messenger que envia el cliente.
     private Messenger mMessenger;
     //Messenger que envia el servicio.
@@ -34,6 +34,7 @@ public class msgService extends Service {
         thread.start();
         mServiceLooper = thread.getLooper();
         mMessenger = new Messenger(new mHandler(mServiceLooper));
+        mp = MediaPlayer.create(msgService.this, Settings.System.DEFAULT_RINGTONE_URI);
     }
 
     //Clase Handler maneja el mensaje enviado por el cliente.
@@ -97,6 +98,13 @@ public class msgService extends Service {
         if(mp != null) mp.release();
         Toast.makeText(this, "Saliendo del servicio", Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Toast.makeText(this, "Saliendo del servicio", Toast.LENGTH_SHORT).show();
+        return super.onUnbind(intent);
+    }
+
     public void notificacion(){
         //Intent intent = new Intent(this, MainActivity.class);
         //intent.putExtra("dato","Jajajajaja funciono xD");

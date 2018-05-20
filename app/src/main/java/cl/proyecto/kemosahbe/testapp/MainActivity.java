@@ -18,7 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements OnClickListener {
-    Button btn1, btn2, btn3;
+    Button btn1, btn2, btn3, btn4;
     TextView text;
     private static final String tag = "App:";
     Messenger mService = null;
@@ -34,7 +34,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         btn2.setOnClickListener(this);
         btn3 = (Button)findViewById(R.id.btnstop);
         btn3.setOnClickListener(this);
-        Log.d(tag, "Hola Mundo.");
+        btn4 = (Button)findViewById(R.id.btnpause);
+        btn4.setOnClickListener(this);
+        Log.e(tag, "Hola Mundo.");
         text = (TextView)findViewById(R.id.txt);
         text.setText("Hola Mundo");
     }
@@ -60,24 +62,24 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         }
     }
     public void onClick(View v){
-        Bundle bundle = new Bundle();
+        Intent intent = new Intent(MainActivity.this, MusicService.class);;
         switch (v.getId()){
             case R.id.btn1:
                 sendcmd("Boton1");
                 break;
             case R.id.btnplay:
-                bundle.putInt(msgService.MSG_MEDIA,msgService.CMD_PLAY);
-                sendcmd(bundle);
+                startService(intent);
                 break;
+            case R.id.btnpause:
+                intent.putExtra("PAUSE",true);
+                bindService(intent,mConnection,Context.BIND_AUTO_CREATE);
             case R.id.btnstop:
-                bundle.putInt(msgService.MSG_MEDIA, msgService.CMD_STOP);
-                sendcmd(bundle);
+                stopService(intent);
                 break;
             default:
                 break;
         }
     }
-
     public void sendcmd(String s) {
         if (!mBound) return;
         Message msg = Message.obtain();

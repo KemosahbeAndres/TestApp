@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">TestApp</string>
     <string name="play">Play</string>
+    <string name="pause">Pause</string>
     <string name="stop">Stop</string>
     <string name="sbtn">Encender</string>
     <string name="info">Info:</string>
