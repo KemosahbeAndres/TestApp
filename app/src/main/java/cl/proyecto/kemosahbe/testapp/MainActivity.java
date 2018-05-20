@@ -65,11 +65,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             case R.id.btn1:
                 sendcmd("Boton1");
                 break;
-            case R.id.btn2:
+            case R.id.btnplay:
                 bundle.putInt(msgService.MSG_MEDIA,msgService.CMD_PLAY);
                 sendcmd(bundle);
                 break;
-            case R.id.btn3:
+            case R.id.btnstop:
                 bundle.putInt(msgService.MSG_MEDIA, msgService.CMD_STOP);
                 sendcmd(bundle);
                 break;
