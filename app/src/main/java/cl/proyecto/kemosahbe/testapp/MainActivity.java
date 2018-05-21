@@ -22,7 +22,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity implements OnClickListener {
     Button play, pause, stop;
     SeekBar seek;
-    TextView duration, time, txt1, txt2, txt3, txt4;
+    TextView duration, time;
     Messenger musicService = null;
     Boolean mBound = false;
 
