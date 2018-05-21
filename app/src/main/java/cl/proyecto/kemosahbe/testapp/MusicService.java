@@ -13,7 +13,9 @@ import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
 
-public class MusicService extends Service{
+import java.io.IOException;
+
+public class MusicService extends Service implements MediaPlayer.OnCompletionListener{
     MediaPlayer mp;
     Messenger sMessenger, aMessenger;
     Boolean stoped = false;
@@ -22,23 +24,26 @@ public class MusicService extends Service{
     static final int CMD_STOP = 0;
     static final int CMD_PLAY = 1;
     static final int CMD_PAUSE = 2;
+    static final int CMD_SEEK = 3;
+
 
     @Override
     public void onCreate(){
-        Log.i("DEBUG","onCreate Service Thread: "+Thread.currentThread().getName());
-        Log.i("DEBUG","ID: "+Thread.currentThread().getId());
+        //Log.i("DEBUG","onCreate Service Thread: "+Thread.currentThread().getName());
+        //Log.i("DEBUG","ID: "+Thread.currentThread().getId());
         HandlerThread hThread = new HandlerThread("MusicServiceThread");
         hThread.start();
         //Toast.makeText(this, "Servicio Iniciado", Toast.LENGTH_SHORT).show();
         mp = MediaPlayer.create(this, R.raw.thefatrat_fly_away_feat_anjulie);
+        mp.setOnCompletionListener(this);
         sMessenger = new Messenger(new mHandler(hThread.getLooper()));
         //mHandler hService = new mHandler(hThread.getLooper());
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.i("DEBUG","Binded to Thread: "+Thread.currentThread().getName());
-        Log.i("DEBUG","ID: "+Thread.currentThread().getId());
+        //Log.i("DEBUG","Binded to Thread: "+Thread.currentThread().getName());
+        //Log.i("DEBUG","ID: "+Thread.currentThread().getId());
         Bundle extras = intent.getExtras();
         if(extras != null) aMessenger = (Messenger) extras.get("MESSENGER");
         Bundle mbundle = new Bundle();
@@ -58,17 +63,17 @@ public class MusicService extends Service{
     public boolean onUnbind(Intent intent) {
         mp.stop();
         mp.release();
-        Log.i("DEBUG","Servicio Unbinded");
+        //Log.i("DEBUG","Servicio Unbinded");
         return super.onUnbind(intent);
     }
 
     @Override
     public void onDestroy() {
-        Log.i("DEBUG","Servicio Destruido");
+        //Log.i("DEBUG","Servicio Destruido");
         super.onDestroy();
     }
 
-    public void timeloop(){
+    public void timeloop(Boolean wait){
             Bundle mbundle = new Bundle();
             Message msg = Message.obtain();
             int[] mInfo = {mp.getDuration(),mp.getCurrentPosition()};
@@ -80,10 +85,23 @@ public class MusicService extends Service{
                 e.printStackTrace();
             }
         try {
-            Thread.sleep(1000);
+            if(wait) Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {
+        mediaPlayer.seekTo(0);
+        mediaPlayer.stop();
+        stoped = true;
+        try {
+            mediaPlayer.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        timeloop(false);
     }
 
     class mHandler extends Handler{
@@ -92,8 +110,8 @@ public class MusicService extends Service{
         }
         @Override
         public void handleMessage(Message msg) {
-            Log.i("DEBUG","Message running on: "+Thread.currentThread().getName());
-            Log.i("DEBUG","ID: "+Thread.currentThread().getId());
+            //Log.i("DEBUG","Message running on: "+Thread.currentThread().getName());
+            //Log.i("DEBUG","ID: "+Thread.currentThread().getId());
             Bundle mBundle = msg.getData();
             int cmd = mBundle.getInt("cmd");
             switch (cmd){
@@ -116,7 +134,7 @@ public class MusicService extends Service{
                         e.printStackTrace();
                     }
                     break;
-                case 55:
+                case CMD_SEEK:
                     mp.seekTo(mBundle.getInt("progress")*1000);
                     break;
                 default:
@@ -127,7 +145,7 @@ public class MusicService extends Service{
     public class Task extends AsyncTask<Void,Integer,Boolean>{
         @Override
         protected Boolean doInBackground(Void... voids) {
-            while(mp.isPlaying()) timeloop();
+            while(mp.isPlaying()) timeloop(true);
             return true;
         }
     }

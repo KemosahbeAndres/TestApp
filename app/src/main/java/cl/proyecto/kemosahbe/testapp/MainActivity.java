@@ -4,7 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.media.MediaRecorder;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -22,7 +22,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity implements OnClickListener {
     Button play, pause, stop;
     SeekBar seek;
-    TextView duration, time;
+    TextView duration, time, txt1, txt2, txt3, txt4;
     Messenger musicService = null;
     Boolean mBound = false;
 
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 Message mMessage = Message.obtain();
                 Bundle mBundle = new Bundle();
-                mBundle.putInt("cmd",55);
+                mBundle.putInt("cmd",MusicService.CMD_SEEK);
                 //Toast.makeText(MainActivity.this, ""+progress, Toast.LENGTH_SHORT).show();
                 mBundle.putInt("progress",progress);
                 mMessage.setData(mBundle);
@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         super.onStart();
         //Intent intent = new Intent(this, msgService.class);
         Intent intent = new Intent(this, MusicService.class);
-        Log.i("DEBUG","Current Thread: "+Thread.currentThread().getName());
-        Log.i("DEBUG", "Thread ID: "+Thread.currentThread().getId());
+        //Log.i("DEBUG","Current Thread: "+Thread.currentThread().getName());
+        //Log.i("DEBUG", "Thread ID: "+Thread.currentThread().getId());
         Messenger messenger = new Messenger(handler);
         try{
             intent.putExtra("MESSENGER",messenger);
@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         }catch(Exception e){
             e.printStackTrace();
         }
+
     }
     @Override
     protected void onDestroy(){
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                     e.printStackTrace();
                 }
                 seek.setProgress(0);
-                time.setText(""+0);
+                time.setText("0:00");
                 break;
             default:
                 break;
@@ -152,6 +153,18 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             mBound = false;
         }
     };
+    public String toTime(int mili){
+        double segTotal = mili / 1000.0;
+        int minInt = (int)(segTotal / 60);
+        double segPorcen = ((segTotal / 60.0 - minInt) * 100.0);
+        double segInt = (60.0 / 100.0) * segPorcen;
+        if(Math.round(segInt)<10){
+            return minInt + ":0" + Math.round(segInt);
+        }else {
+            return minInt + ":" + Math.round(segInt);
+        }
+        //return minInt + ":" + (int)segInt;
+    }
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -159,9 +172,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             int[] mArray = {};
             if(data != null){
                 mArray = data.getIntArray("timearray");
-                duration.setText(""+mArray[0]/1000);
-                time.setText(""+mArray[1]/1000);
-
+                duration.setText(toTime(mArray[0]));
+                time.setText(toTime(mArray[1]));
                 seek.setProgress(mArray[1]/1000);
             }
         }
