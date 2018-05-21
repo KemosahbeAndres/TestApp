@@ -3,7 +3,6 @@ package cl.proyecto.kemosahbe.testapp;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.media.TimedText;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -16,16 +15,17 @@ public class MusicService extends Service{
     MediaPlayer mp;
     Messenger sMessenger, aMessenger;
     Boolean stoped = false;
+    Runnable runnable;
+    Handler handler;
     //Constantes
     static final int CMD_STOP = 0;
     static final int CMD_PLAY = 1;
     static final int CMD_PAUSE = 2;
 
-
-
     @Override
     public void onCreate(){
-        super.onCreate();
+        HandlerThread thread = new HandlerThread("Music Service");
+        thread.start();
         Toast.makeText(this, "Servicio Iniciado", Toast.LENGTH_SHORT).show();
         mp = MediaPlayer.create(this, R.raw.thefatrat_fly_away_feat_anjulie);
         sMessenger = new Messenger(new mHandler());
@@ -55,6 +55,28 @@ public class MusicService extends Service{
         Toast.makeText(this, "Deteniendo Servicio", Toast.LENGTH_SHORT).show();
         return super.onUnbind(intent);
     }
+    public void timeloop(){
+        Bundle mbundle = new Bundle();
+        Message msg = Message.obtain();
+        int[] mInfo = {mp.getDuration(),mp.getCurrentPosition()};
+        mbundle.putIntArray("timearray",mInfo);
+        msg.setData(mbundle);
+        try {
+            aMessenger.send(msg);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        if(mp.isPlaying()){
+            runnable = new Runnable() {
+                @Override
+                public void run() {
+                    timeloop();
+                }
+            };
+            handler.postDelayed(runnable, 500);
+        }
+    }
 
     class mHandler extends Handler{
         @Override
@@ -65,6 +87,7 @@ public class MusicService extends Service{
                 case CMD_PLAY:
                     mp.start();
                     stoped = false;
+                    timeloop();
                     break;
                 case CMD_PAUSE:
                     if(!stoped) mp.pause();
@@ -79,7 +102,7 @@ public class MusicService extends Service{
                     }
                     break;
                 case 55:
-                    mp.seekTo(mBundle.getInt("progress"));
+                    mp.seekTo(mBundle.getInt("progress")*1000);
                     break;
                 default:
                     break;

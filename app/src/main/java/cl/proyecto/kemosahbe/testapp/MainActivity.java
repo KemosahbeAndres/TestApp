@@ -11,12 +11,12 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements OnClickListener {
     Button play, pause, stop;
@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 Message mMessage = Message.obtain();
                 Bundle mBundle = new Bundle();
                 mBundle.putInt("cmd",55);
+                Toast.makeText(MainActivity.this, ""+progress, Toast.LENGTH_SHORT).show();
                 mBundle.putInt("progress",progress);
                 mMessage.setData(mBundle);
                 try{
@@ -81,12 +82,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         }
     }
     @Override
-    protected void onStop(){
-        super.onStop();
+    protected void onDestroy(){
         if(mBound){
             unbindService(mConnection);
             mBound = false;
         }
+        super.onDestroy();
     }
     public void onClick(View v){
         Message mMessage = Message.obtain();
@@ -154,7 +155,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             if(data != null){
                 mArray = data.getIntArray("timearray");
                 duration.setText(""+(mArray[0]/1000));
-                time.setText(""+mArray[1]);
+                time.setText(""+mArray[1]/1000);
+                seek.setProgress(mArray[1]/1000);
             }
         }
     };
