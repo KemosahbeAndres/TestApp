@@ -125,7 +125,6 @@ public class MusicService extends Service{
             }
         }
     }
-
     public class Task extends AsyncTask<Void,Integer,Boolean>{
         @Override
         protected Boolean doInBackground(Void... voids) {
