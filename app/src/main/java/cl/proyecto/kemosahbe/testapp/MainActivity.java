@@ -40,7 +40,31 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
         duration = (TextView)findViewById(R.id.duracion);
         time = (TextView)findViewById(R.id.tiempo);
+        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Message mMessage = Message.obtain();
+                Bundle mBundle = new Bundle();
+                mBundle.putInt("cmd",55);
+                mBundle.putInt("progress",progress);
+                mMessage.setData(mBundle);
+                try{
+                    if(fromUser) musicService.send(mMessage);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
 
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
     }
     @Override
