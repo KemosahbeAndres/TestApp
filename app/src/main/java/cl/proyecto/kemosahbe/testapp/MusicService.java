@@ -3,6 +3,7 @@ package cl.proyecto.kemosahbe.testapp;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -15,8 +16,7 @@ public class MusicService extends Service{
     MediaPlayer mp;
     Messenger sMessenger, aMessenger;
     Boolean stoped = false;
-    Runnable runnable;
-    Handler handler;
+    Task mTask;
     //Constantes
     static final int CMD_STOP = 0;
     static final int CMD_PLAY = 1;
@@ -29,6 +29,7 @@ public class MusicService extends Service{
         Toast.makeText(this, "Servicio Iniciado", Toast.LENGTH_SHORT).show();
         mp = MediaPlayer.create(this, R.raw.thefatrat_fly_away_feat_anjulie);
         sMessenger = new Messenger(new mHandler());
+
     }
 
     @Override
@@ -56,25 +57,22 @@ public class MusicService extends Service{
         return super.onUnbind(intent);
     }
     public void timeloop(){
-        Bundle mbundle = new Bundle();
-        Message msg = Message.obtain();
-        int[] mInfo = {mp.getDuration(),mp.getCurrentPosition()};
-        mbundle.putIntArray("timearray",mInfo);
-        msg.setData(mbundle);
-        try {
-            aMessenger.send(msg);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
         if(mp.isPlaying()){
-            runnable = new Runnable() {
-                @Override
-                public void run() {
-                    timeloop();
-                }
-            };
-            handler.postDelayed(runnable, 500);
+            Bundle mbundle = new Bundle();
+            Message msg = Message.obtain();
+            int[] mInfo = {mp.getDuration(),mp.getCurrentPosition()};
+            mbundle.putIntArray("timearray",mInfo);
+            msg.setData(mbundle);
+            try {
+                aMessenger.send(msg);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -87,7 +85,8 @@ public class MusicService extends Service{
                 case CMD_PLAY:
                     mp.start();
                     stoped = false;
-                    timeloop();
+                    mTask = new Task();
+                    mTask.execute();
                     break;
                 case CMD_PAUSE:
                     if(!stoped) mp.pause();
@@ -107,6 +106,18 @@ public class MusicService extends Service{
                 default:
                     break;
             }
+        }
+    }
+
+    public class Task extends AsyncTask<Void,Integer,Boolean>{
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            while(mp.isPlaying()) timeloop();
+            return true;
+        }
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
         }
     }
 }

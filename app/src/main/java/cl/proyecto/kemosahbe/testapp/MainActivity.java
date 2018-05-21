@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 Message mMessage = Message.obtain();
                 Bundle mBundle = new Bundle();
                 mBundle.putInt("cmd",55);
-                Toast.makeText(MainActivity.this, ""+progress, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, ""+progress, Toast.LENGTH_SHORT).show();
                 mBundle.putInt("progress",progress);
                 mMessage.setData(mBundle);
                 try{
@@ -156,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 mArray = data.getIntArray("timearray");
                 duration.setText(""+(mArray[0]/1000));
                 time.setText(""+mArray[1]/1000);
+
                 seek.setProgress(mArray[1]/1000);
             }
         }
