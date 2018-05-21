@@ -6,4 +6,5 @@
     <string name="title">TheFatRat - Fly Away</string>
     <string name="duracion">Duracion:</string>
     <string name="tiempo">Transcurrido:</string>
+    <string name="send_to">Enviar a</string>
 </resources>

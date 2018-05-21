@@ -12,7 +12,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
-import android.widget.Toast;
 
 public class MusicService extends Service{
     MediaPlayer mp;

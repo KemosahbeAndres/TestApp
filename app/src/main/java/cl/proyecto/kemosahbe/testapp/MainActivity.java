@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -54,16 +55,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                     e.printStackTrace();
                 }
             }
-
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
+            public void onStartTrackingTouch(SeekBar seekBar){}
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
+            public void onStopTrackingTouch(SeekBar seekBar){}
         });
 
     }
@@ -89,6 +84,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             mBound = false;
         }
         super.onDestroy();
+    }
+    public void miaccion(View v){
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Hola ke hace.");
+        sendIntent.setType("text/plain");
+        startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
     }
     public void onClick(View v){
         Message mMessage = Message.obtain();
@@ -164,5 +166,4 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             }
         }
     };
-
 }
