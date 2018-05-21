@@ -115,9 +115,5 @@ public class MusicService extends Service{
             while(mp.isPlaying()) timeloop();
             return true;
         }
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            super.onPostExecute(aBoolean);
-        }
     }
 }
