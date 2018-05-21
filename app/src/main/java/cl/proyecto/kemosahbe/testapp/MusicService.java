@@ -3,16 +3,18 @@ package cl.proyecto.kemosahbe.testapp;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.media.TimedText;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.widget.Toast;
 
-public class MusicService extends Service {
+public class MusicService extends Service{
     MediaPlayer mp;
-    Messenger sMessenger;
+    Messenger sMessenger, aMessenger;
     Boolean stoped = false;
     //Constantes
     static final int CMD_STOP = 0;
@@ -20,16 +22,29 @@ public class MusicService extends Service {
     static final int CMD_PAUSE = 2;
 
 
+
     @Override
-    public void onCreate() {
+    public void onCreate(){
         super.onCreate();
         Toast.makeText(this, "Servicio Iniciado", Toast.LENGTH_SHORT).show();
-        mp = MediaPlayer.create(this, R.raw.thefatrat_aly_away_feat_anjulie);
+        mp = MediaPlayer.create(this, R.raw.thefatrat_fly_away_feat_anjulie);
         sMessenger = new Messenger(new mHandler());
     }
 
     @Override
     public IBinder onBind(Intent intent) {
+        Bundle extras = intent.getExtras();
+        if(extras != null) aMessenger = (Messenger) extras.get("MESSENGER");
+        Bundle mbundle = new Bundle();
+        Message msg = Message.obtain();
+        int[] mInfo = {mp.getDuration(),mp.getCurrentPosition()};
+        mbundle.putIntArray("timearray",mInfo);
+        msg.setData(mbundle);
+        try {
+            aMessenger.send(msg);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         return sMessenger.getBinder();
     }
 
@@ -62,6 +77,9 @@ public class MusicService extends Service {
                     }catch (Exception e){
                         e.printStackTrace();
                     }
+                    break;
+                case 55:
+                    mp.seekTo(mBundle.getInt("progress"));
                     break;
                 default:
                     break;
