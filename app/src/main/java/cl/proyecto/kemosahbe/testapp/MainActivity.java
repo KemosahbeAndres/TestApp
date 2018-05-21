@@ -11,18 +11,17 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements OnClickListener {
     Button play, pause, stop;
     SeekBar seek;
     TextView duration, time;
-    int[] songinfo;
     Messenger musicService = null;
     Boolean mBound = false;
 
@@ -73,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         super.onStart();
         //Intent intent = new Intent(this, msgService.class);
         Intent intent = new Intent(this, MusicService.class);
+        Log.i("DEBUG","Current Thread: "+Thread.currentThread().getName());
+        Log.i("DEBUG", "Thread ID: "+Thread.currentThread().getId());
         Messenger messenger = new Messenger(handler);
         try{
             intent.putExtra("MESSENGER",messenger);
