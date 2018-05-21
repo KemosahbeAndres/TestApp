@@ -57,7 +57,6 @@ public class MusicService extends Service{
         return super.onUnbind(intent);
     }
     public void timeloop(){
-        if(mp.isPlaying()){
             Bundle mbundle = new Bundle();
             Message msg = Message.obtain();
             int[] mInfo = {mp.getDuration(),mp.getCurrentPosition()};
@@ -68,7 +67,6 @@ public class MusicService extends Service{
             }catch(Exception e){
                 e.printStackTrace();
             }
-        }
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -83,15 +81,16 @@ public class MusicService extends Service{
             int cmd = mBundle.getInt("cmd");
             switch (cmd){
                 case CMD_PLAY:
-                    mp.start();
-                    stoped = false;
                     mTask = new Task();
                     mTask.execute();
+                    mp.start();
+                    stoped = false;
                     break;
                 case CMD_PAUSE:
                     if(!stoped) mp.pause();
                     break;
                 case CMD_STOP:
+                    mp.seekTo(0);
                     mp.stop();
                     stoped = true;
                     try {

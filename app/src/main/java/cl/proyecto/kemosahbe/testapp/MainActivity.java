@@ -119,6 +119,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 }catch(Exception e){
                     e.printStackTrace();
                 }
+                seek.setProgress(0);
+                time.setText(""+0);
                 break;
             default:
                 break;
@@ -154,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             int[] mArray = {};
             if(data != null){
                 mArray = data.getIntArray("timearray");
-                duration.setText(""+(mArray[0]/1000));
+                duration.setText(""+mArray[0]/1000);
                 time.setText(""+mArray[1]/1000);
 
                 seek.setProgress(mArray[1]/1000);
